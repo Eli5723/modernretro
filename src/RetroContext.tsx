@@ -1,50 +1,48 @@
 import React, { useContext, useEffect } from "react";
 
-type RetroEventHandler = () => void;
+type RetroEventHandler<PayloadT> = (payload: PayloadT) => void;
 
-const events: Record<string, RetroEventHandler | null> = {};
+const events: Record<string, RetroEventHandler<any>> = {};
 
-function handleEvent(eventId: string) {
-    const eventHandler = events[eventId];
+function handleEvent(eventId: string, payload: any) {
+	const eventHandler = events[eventId];
 
-    if (!eventHandler) {
-        throw new Error(`Attempted to service unregistered event: ${eventId}`);
-    }
+	if (!eventHandler) {
+		throw new Error(`Attempted to service unregistered event: ${eventId}`);
+	}
 
-    eventHandler();
+	eventHandler(payload);
 }
 
-function subscribe(eventId: string, handler: RetroEventHandler) {
-    if (events[eventId]) {
-        console.warn(`Overwrote existing handler ${eventId}`);
-    }
+function subscribe(eventId: string, handler: RetroEventHandler<any>) {
+	if (events[eventId]) {
+		console.warn(`Overwrote existing handler ${eventId}`);
+	}
 
-    events[eventId] = handler;
+	events[eventId] = handler;
 }
 
 function unsubscribe(eventId: string) {
-    const eventHandler = events[eventId];
+	const eventHandler = events[eventId];
 
-    if (!eventHandler) {
-        console.warn(`Attempted to clear unassigned handler ${eventId}`);
-        return;
-    }
+	if (!eventHandler) {
+		console.warn(`Attempted to clear unassigned handler ${eventId}`);
+		return;
+	}
 
-    events[eventId] = null;
+	delete events[eventId];
 }
 
-const RetroContext = React.createContext({ subscribe, unsubscribe })
+const RetroContext = React.createContext({ subscribe, unsubscribe });
 
-const useRetroEvent = (eventId: string, handler: RetroEventHandler) => {
-    const { subscribe, unsubscribe } = useContext(RetroContext);
+const useRetroEvent = (eventId: string, handler: RetroEventHandler<any>) => {
+	useEffect(() => {
+		subscribe(eventId, handler);
 
-    useEffect(() => {
-        subscribe(eventId, handler);
-
-        return () => {
-            unsubscribe(eventId);
-        }
-    });
-}
+		return () => {
+			unsubscribe(eventId);
+		};
+	});
+};
 
 export { RetroContext, useRetroEvent };
