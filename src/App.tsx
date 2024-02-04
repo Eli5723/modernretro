@@ -1,15 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import '@mantine/core/styles.css';
+
+import '@mantine/core/styles.css';
+
+import { MantineProvider } from '@mantine/core';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import LoginPage from './pages/LoginPage';
+import RetroPage from './pages/RetroPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-
-    </>
+    <MantineProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path={'/'} element={<LoginPage/>}/>
+          <Route path={'/retro/:id'} element={<RetroPage/>}/>
+        </Routes>
+      </BrowserRouter>
+    </MantineProvider>
   )
 }
 
