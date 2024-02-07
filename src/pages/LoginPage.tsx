@@ -1,6 +1,4 @@
-import React from "react";
-
-import { AppShell, Center } from "@mantine/core";
+import { AppShell } from "@mantine/core";
 
 const LoginPage = (): JSX.Element => {
 	return (
